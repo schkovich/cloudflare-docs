@@ -1,10 +1,10 @@
 ---
-title: Create Durable Object stubs
+title: Create Durable Object stubs & Send Requests
 pcx_content_type: concept
-weight: 16
+weight: 2
 ---
 
-# Create Durable Object stubs
+# Create Durable Object stubs & send requests
 
 A Durable Object stub is a client Object used to send requests to a remote Durable Object.
 
@@ -22,7 +22,7 @@ E-order is a concept deriving from the [E distributed programming language](<htt
 
 {{</Aside>}}
 
-## 1. Obtain a Durable Object stub
+## Obtain a Durable Object stub
 
 ```js
 let durableObjectStub = OBJECT_NAMESPACE.get(id);
@@ -33,7 +33,7 @@ let durableObjectStub = OBJECT_NAMESPACE.get(id);
 {{<definitions>}}
 
 - `id` {{<type>}}DurableObjectId{{</type>}}
-  - An ID constructed using `newUniqueId()`, `idFromName()`, or `idFromString()` on this Durable Object namespace.
+  - An ID constructed using `newUniqueId()`, `idFromName()`, or `idFromString()` on this Durable Object namespace, for details see [Access a Durable Object](/durable-objects/best-practices/access-durable-object-from-a-worker/#generate-ids-randomly) .
 
   - This method constructs an Object, which is a local client that provides access to a remote Object.
 
@@ -43,7 +43,45 @@ let durableObjectStub = OBJECT_NAMESPACE.get(id);
 
 {{</definitions>}}
 
-## 2. Send HTTP requests
+## Requests
+
+There are several ways to send requests to a Durable Object.
+
+- [Sending HTTP requests](/durable-objects/best-practices/create-durable-object-stubs/#send-http-requests) to a Durable Object's `fetch()` handler was initially the only method of communicating with a Durable Object.
+- Invoking Remote Procedure Call (RPC) methods defined on a Durable Object class as of [compatibility date 2024-04-03](TODO). If handling HTTP requests and responses is not required for your Durable Object, [RPC methods](/workers/runtime-apis/rpc/) provide the developer experience of function calls on an instance of a JavaScript class.
+- Using the [WebSocket API](durable-objects/reference/websockets/).
+
+### RPC methods
+
+To opt into RPC, a Durable Objects class should extend the built-in type `DurableObject`. Then, public methods on a Durable Objects class are exposed as [RPC methods](/workers/runtime-apis/rpc/), which are callable from a Durable Object stub in a Worker. All RPC calls are [asynchronous](/workers/runtime-apis/rpc/lifecycle), accept & return [serializable types](/workers/runtime-apis/rpc/supported-types), and [propagate exceptions](/workers/runtime-apis/rpc/error-handling) to the caller without a stack trace. See [Workers RPC](/workers/runtime-apis/rpc/supported-types) for complete details.
+
+```ts
+export class Counter extends DurableObject {
+
+	async increment(amount = 1) {
+    let value: number = (await this.ctx.storage.get("value")) || 0;
+    value += amount;
+    this.ctx.storage.put("value", value);
+    return value;
+  }
+}
+```
+
+```ts
+// A Worker calling a Durable Object
+let durableObjectStub = env.COUNTERS.get(id);
+let response = await durableObjectStub.increment();
+```
+
+{{<Aside type="note">}}
+
+Historically, the `ctx` object for Durable Objects has been given a variety of different names in example code, most commonly `state`. Until introduction of [RPC methods](/workers/runtime-apis/rpc/), `state` was just the name of a Durable Object constructor parameter, so an application could use whatever name they wanted. With RPC, the `DurableObject` superclass defines these values as properties, so they must have official names. We have standardized on `ctx` for consistency between `DurableObject` and `WorkerEntrypoint`.
+
+{{</Aside>}}
+
+See [Build a Counter](/durable-objects/examples/build-a-counter/) for a full example.
+
+### Send HTTP requests
 
 ```js
 let response = await durableObjectStub.fetch(request);
@@ -74,7 +112,7 @@ To understand how exceptions are thrown from within a Durable Object, refer to t
 
 {{</Aside>}}
 
-## 3. List Durable Objects
+## List Durable Objects
 
 The Cloudflare REST API supports retrieving a [list of Durable Objects](/api/operations/durable-objects-namespace-list-objects) within a Durable Object namespace and a [list of namespaces](/api/operations/durable-objects-namespace-list-namespaces) associated with an account.
 
