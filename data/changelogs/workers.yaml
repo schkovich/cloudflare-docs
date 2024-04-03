@@ -2,6 +2,11 @@
 link: "/workers/platform/changelog/"
 productName: Workers
 entries:
+- publish_date: '2024-04-03'
+  description: |-
+    - There is no longer an explicit limit on the total amount of data which may be uploaded with Cache API [`put()`](/workers/runtime-apis/cache/#put) per request. Other [Cache API Limits](/workers/platform/limits/#cache-api-limits) continue to apply.
+    - The Web standard `ReadableStream.from()` API is now implemented. The API enables creating a `ReadableStream` from a either a sync or async iterable.
+    - When the `brotli_content_encoding` compatibility flag is enabled, Workers will now support the `br` Content-Encoding and can request and respond with data encoded using the brotli compression algorithm.
 - publish_date: '2024-04-01'
   description: |-
     - The new [`unwrap_custom_thenables` compatibility flag](/workers/configuration/compatibility-dates/#support-for-accepting-custom-thenables-in-internal-apis) enables workers to accept custom thenables in internal APIs that expect a promise (for instance, the `ctx.waitUntil(...)` method).

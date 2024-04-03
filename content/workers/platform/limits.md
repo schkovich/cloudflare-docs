@@ -96,13 +96,10 @@ On the Unbound billing model, scheduled Workers ([Cron Triggers](/workers/config
 | ----------------------------- | ------------- | ------- | ------- | ------- |
 | [Max object size](#cache-api-limits) | 512 MB | 512 MB  | 512 MB  | 512 MB  |
 | [Calls/request](#cache-api-limits)   | 50     | 50      | 1,000   | 1,000   |
-| [Storage/request](#cache-api-limits) | 5 GB   | 5 GB    | 5 GB    | 5 GB    |
 
 {{</table-wrap>}}
 
 - 50 total `put()`, `match()`, or `delete()` calls per-request, using the same quota as `fetch()`.
-
-- 5 GB total `put()` per request.
 
 {{<Aside type="note">}}
 
