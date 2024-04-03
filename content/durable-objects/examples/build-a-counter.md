@@ -159,14 +159,14 @@ export class Counter extends DurableObject {
 		// You do not have to worry about a concurrent request having modified the value in storage. 
     // "input gates" will automatically protect against unwanted concurrency. 
     // Read-modify-write is safe. 
-    this.ctx.storage.put("value", value);
+    await this.ctx.storage.put("value", value);
     return value;
   }
 
 	async decrement(amount = 1) {
     let value: number = (await this.ctx.storage.get("value")) || 0;
     value -= amount;
-    this.ctx.storage.put("value", value);
+    await this.ctx.storage.put("value", value);
     return value;
   }
 }
