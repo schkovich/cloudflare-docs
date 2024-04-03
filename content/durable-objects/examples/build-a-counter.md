@@ -18,6 +18,8 @@ This example shows how to build a counter using Durable Objects and Workers with
 ---
 filename: index.js
 ---
+import { DurableObject } from "cloudflare:workers";
+
 // Worker
 export default {
   async fetch(request, env) {
@@ -34,39 +36,35 @@ export default {
     // has its own state. `idFromName()` always returns the same ID when given the
     // same string as input (and called on the same class), but never the same
     // ID for two different strings (or for different classes).
-    let id = env.COUNTER.idFromName(name);
+    let id = env.COUNTERS.idFromName(name);
 
     // Construct the stub for the Durable Object using the ID. 
     // A stub is a client Object used to send messages to the Durable Object.
-    let stub = env.COUNTER.get(id);
+    let stub = env.COUNTERS.get(id);
 
     // Send a request to the Durable Object using RPC methods, then await its response.
-    let resp = null;
+    let count = null;
 		switch (url.pathname) {
       case "/increment":
-				resp = await stub.increment();
+				count = await stub.increment();
         break;
 			case "/decrement":
-				resp = await stub.decrement();
+				count = await stub.decrement();
 				break;
       case "/":
         // Serves the current value.
-				resp = await stub.getCounterValue();
+				count = await stub.getCounterValue();
         break;
       default:
         return new Response("Not found", { status: 404 });
     }
 
-		let count = await resp;
     return new Response(`Durable Object '${name}' count: ${count}`);
   }
 };
 
 // Durable Object
-export class Counter {
-  constructor(ctx, env) {
-    this.ctx = ctx;
-  }
+export class Counter extends DurableObject {
 
 	async getCounterValue() {
     let value = (await this.ctx.storage.get("value")) || 0;
@@ -127,32 +125,28 @@ export default {
     // A stub is a client Object used to send messages to the Durable Object.
     let stub = env.COUNTERS.get(id);
 
-		let resp = null;
+		let count = null;
 		switch (url.pathname) {
       case "/increment":
-				resp = await stub.increment();
+				count = await stub.increment();
         break;
 			case "/decrement":
-				resp = await stub.decrement();
+				count = await stub.decrement();
 				break;
       case "/":
         // Serves the current value.
-				resp = await stub.getCounterValue();
+				count = await stub.getCounterValue();
         break;
       default:
         return new Response("Not found", { status: 404 });
     }
 
-		let count = await resp;
     return new Response(`Durable Object '${name}' count: ${count}`);
   }
 };
 
 // Durable Object
 export class Counter extends DurableObject {
-  constructor(ctx: DurableObjectState, env: Env) {
-    super(ctx, env);
-  }
 
 	async getCounterValue() {
     let value = (await this.ctx.storage.get("value")) || 0;

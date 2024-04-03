@@ -79,6 +79,8 @@ let response = await durableObjectStub.increment();
 
 Historically, the `ctx` object for Durable Objects has been given a variety of different names in example code, most commonly `state`. Until introduction of [RPC methods](/workers/runtime-apis/rpc/), `state` was just the name of a Durable Object constructor parameter, so an application could use whatever name they wanted. With RPC, the `DurableObject` superclass defines these values as properties, so they must have official names. We have standardized on `ctx` for consistency between `DurableObject` and `WorkerEntrypoint`.
 
+Prior to [RPC introduction](/workers/configuration/compatibility-dates/#remote-procedure-call-rpc), the `ctx` object for Durable Objects was known as `state`. `state` was the name of the Durable Object constructor parameter, so an application could use any other name. With RPC, the `DurableObject` superclass defines these values as properties, so they must have official names. `ctx` was chosen for consistency between `DurableObject` and `WorkerEntrypoint`.
+
 {{</Aside>}}
 
 Refer to [Build a Counter](/durable-objects/examples/build-a-counter/) for a full example.
