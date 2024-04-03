@@ -1,10 +1,10 @@
 ---
-title: Create Durable Object stubs & Send Requests
+title: Create Durable Object stubs and send requests
 pcx_content_type: concept
 weight: 2
 ---
 
-# Create Durable Object stubs & send requests
+# Create Durable Object stubs and send requests
 
 A Durable Object stub is a client Object used to send requests to a remote Durable Object.
 
@@ -22,7 +22,7 @@ E-order is a concept deriving from the [E distributed programming language](<htt
 
 {{</Aside>}}
 
-## Obtain a Durable Object stub
+## Get a Durable Object stub
 
 ```js
 let durableObjectStub = OBJECT_NAMESPACE.get(id);
@@ -33,7 +33,7 @@ let durableObjectStub = OBJECT_NAMESPACE.get(id);
 {{<definitions>}}
 
 - `id` {{<type>}}DurableObjectId{{</type>}}
-  - An ID constructed using `newUniqueId()`, `idFromName()`, or `idFromString()` on this Durable Object namespace, for details see [Access a Durable Object](/durable-objects/best-practices/access-durable-object-from-a-worker/#generate-ids-randomly) .
+  - An ID constructed using `newUniqueId()`, `idFromName()`, or `idFromString()` on this Durable Object namespace. For details, refer to [Access a Durable Object](/durable-objects/best-practices/access-durable-object-from-a-worker/#generate-ids-randomly) .
 
   - This method constructs an Object, which is a local client that provides access to a remote Object.
 
@@ -43,19 +43,21 @@ let durableObjectStub = OBJECT_NAMESPACE.get(id);
 
 {{</definitions>}}
 
-## Requests
+## Send requests
 
-There are several ways to send requests to a Durable Object.
+You can send requests to a Durable Object by:
 
-- [Sending HTTP requests](/durable-objects/best-practices/create-durable-object-stubs/#send-http-requests) to a Durable Object's `fetch()` handler was initially the only method of communicating with a Durable Object.
-- Invoking Remote Procedure Call (RPC) methods defined on a Durable Object class as of [compatibility date 2024-04-03](TODO). If handling HTTP requests and responses is not required for your Durable Object, [RPC methods](/workers/runtime-apis/rpc/) provide the developer experience of function calls on an instance of a JavaScript class.
+- [Sending HTTP requests](/durable-objects/best-practices/create-durable-object-stubs/#send-http-requests) to a Durable Object's `fetch()` handler.
+- Invoking [Remote Procedure Call (RPC)](/workers/runtime-apis/rpc/) methods defined on a Durable Object class (available for Workers with a [compatibility date greater than or equal to `2024-04-03`](/workers/configuration/compatibility-dates/#remote-procedure-call-rpc)).
 - Using the [WebSocket API](durable-objects/reference/websockets/).
 
 ### RPC methods
 
-To opt into RPC, a Durable Objects class should extend the built-in type `DurableObject`. Then, public methods on a Durable Objects class are exposed as [RPC methods](/workers/runtime-apis/rpc/), which are callable from a Durable Object stub in a Worker. All RPC calls are [asynchronous](/workers/runtime-apis/rpc/lifecycle), accept & return [serializable types](/workers/runtime-apis/rpc/supported-types), and [propagate exceptions](/workers/runtime-apis/rpc/error-handling) to the caller without a stack trace. See [Workers RPC](/workers/runtime-apis/rpc/supported-types) for complete details.
+To use RPC, a Durable Objects class should extend the built-in type `DurableObject`. Then, public methods on a Durable Objects class are exposed as [RPC methods](/workers/runtime-apis/rpc/), which you can call from a Durable Object stub in a Worker. All RPC calls are [asynchronous](/workers/runtime-apis/rpc/lifecycle), accept and return [serializable types](/workers/runtime-apis/rpc/supported-types), and [propagate exceptions](/workers/runtime-apis/rpc/error-handling) to the caller without a stack trace. Refer to [Workers RPC](/workers/runtime-apis/rpc/supported-types) for complete details.
 
 ```ts
+import { DurableObject } from "cloudflare:workers";
+
 export class Counter extends DurableObject {
 
 	async increment(amount = 1) {
@@ -79,7 +81,7 @@ Historically, the `ctx` object for Durable Objects has been given a variety of d
 
 {{</Aside>}}
 
-See [Build a Counter](/durable-objects/examples/build-a-counter/) for a full example.
+Refer to [Build a Counter](/durable-objects/examples/build-a-counter/) for a full example.
 
 ### Send HTTP requests
 
