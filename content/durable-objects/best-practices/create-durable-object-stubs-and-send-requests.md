@@ -43,15 +43,15 @@ let durableObjectStub = OBJECT_NAMESPACE.get(id);
 
 {{</definitions>}}
 
-## Send requests
+## Call a Durable Object
 
-You can send requests to a Durable Object by:
+You can call a Durable Object by:
 
 - [Sending HTTP requests](/durable-objects/best-practices/create-durable-object-stubs/#send-http-requests) to a Durable Object's `fetch()` handler.
 - Invoking [Remote Procedure Call (RPC)](/workers/runtime-apis/rpc/) methods defined on a Durable Object class (available for Workers with a [compatibility date greater than or equal to `2024-04-03`](/workers/configuration/compatibility-dates/#remote-procedure-call-rpc)).
 - Using the [WebSocket API](durable-objects/reference/websockets/).
 
-### RPC methods
+### Call RPC methods
 
 To use RPC, a Durable Objects class should extend the built-in type `DurableObject`. Then, public methods on a Durable Objects class are exposed as [RPC methods](/workers/runtime-apis/rpc/), which you can call from a Durable Object stub in a Worker. All RPC calls are [asynchronous](/workers/runtime-apis/rpc/lifecycle), accept and return [serializable types](/workers/runtime-apis/rpc/supported-types), and [propagate exceptions](/workers/runtime-apis/rpc/error-handling) to the caller without a stack trace. Refer to [Workers RPC](/workers/runtime-apis/rpc/supported-types) for complete details.
 
@@ -77,7 +77,7 @@ let response = await durableObjectStub.increment();
 
 {{<Aside type="note">}}
 
-Prior to [RPC introduction](/workers/configuration/compatibility-dates/#remote-procedure-call-rpc), the `ctx` object for Durable Objects was known as `state`. `state` was the name of the Durable Object constructor parameter, so an application could use any other name. With RPC, the `DurableObject` superclass defines these values as properties, so they must have official names. `ctx` was chosen for consistency between `DurableObject` and `WorkerEntrypoint`.
+When you write a Worker that does not extend the [`DurableObject` class](/workers/configuration/compatibility-dates/#remote-procedure-call-rpc), the `ctx` object for Durable Objects was known as `state` in code examples. `state` was the name of the Durable Object constructor parameter, so an application could use any other name. With RPC, the `DurableObject` superclass defines these values as properties, so they must have official names. `ctx` was chosen for consistency between `DurableObject` and `WorkerEntrypoint`.
 
 {{</Aside>}}
 
